@@ -392,21 +392,27 @@
                 container.appendChild(countryCard);
             });
         }
+        
+        //this may need more fine-tuning
+        async function refreshData() {
+            document.getElementById('loading').style.display = 'block';
 
-        function refreshData() {
-            const loading = document.getElementById('loading');
-            const container = document.getElementById('countries-container');
+            const baseCountry = document.getElementById('base_country').value;
+            const partnerCountry = document.getElementById('partner_country').value;
+            const year = document.getElementById('year').value;
+            const category = document.getElementById('category').value;
             
-            loading.style.display = 'block';
-            container.style.display = 'none';
-            
-            // Simulate API call
-            setTimeout(() => {
-                renderCountries(sampleCountries);
-                updateLastUpdated();
-                loading.style.display = 'none';
-                container.style.display = 'grid';
-            }, 1500);
+            //query string
+            const queryParams = `?base_country=${baseCountry}&partner_country=${partnerCountry}&year=${year}&category=${category}`;
+        
+            //making the API call
+            try {
+                const response = await fetch(`/api/stats/summary${queryParams}`);
+                const data = await response.json();
+
+            } catch (error){
+                console.error('Error: ', error)
+            }
         }
 
         function updateLastUpdated() {
