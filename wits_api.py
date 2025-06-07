@@ -44,6 +44,7 @@ import requests
 # tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/USA/year/2022/partner/WLD/product/ALL/indicator/AHS-SMPL-AVRG?format=JSON"
 # tariffs_resp = requests.get(tariffs_url)
 # tariffs_json = tariffs_resp.json()
+# print(tariffs_json)
 
 # tariff_series = tariffs_json['dataSets'][0]['series']
 
@@ -120,9 +121,5 @@ async def get_grid_data(country, year, partner, product):
     # print(f"Countries tracked: {rate_ct}\n")
 
     return atr, rate_ct, tot_trade_vol, htr
-
-
-if __name__ == "__main__":
-    get_grid_data("USA", 2022, "WLD", "ALL")
 
 #how to connect wits_api and main.py?

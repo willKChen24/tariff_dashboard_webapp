@@ -313,12 +313,12 @@
             <!-- Countries will be populated here -->
         </div>
 
-        <div class="loading" id="loading">Loading tariff data...</div>
+        <div class="loading" id="loading" style="display: none;">Loading tariff data...</div>
         <div class="last-updated" id="last-updated">Last updated: Never</div>
     </div>
 
     <script>
-        // Sample data structure
+        // Sample data structure (moved to global scope)
         const sampleCountries = [
             {
                 name: "China",
@@ -352,7 +352,7 @@
             },
             {
                 name: "Japan",
-                tariffRate: "2.5%",
+                tariffRate: "2.5%", 
                 tradeVolume: "$216,300 million",
                 categories: [
                     { name: "Agricultural Products", rate: "15.1%" },
@@ -362,6 +362,7 @@
             }
         ];
 
+        // Global function to render countries
         function renderCountries(countries) {
             const container = document.getElementById('countries-container');
             container.innerHTML = '';
@@ -393,49 +394,68 @@
             });
         }
         
-        //this may need more fine-tuning
+        // Global refreshData function - now accessible from onclick
         async function refreshData() {
             document.getElementById('loading').style.display = 'block';
 
-            const baseCountry = document.getElementById('base_country').value;
-            const partnerCountry = document.getElementById('partner_country').value;
+            const baseCountry = document.getElementById('base-country').value;
             const year = document.getElementById('year').value;
             const category = document.getElementById('category').value;
             
-            //query string
-            const queryParams = `?base_country=${baseCountry}&partner_country=${partnerCountry}&year=${year}&category=${category}`;
+            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}`;
         
-            //making the API call
             try {
                 const response = await fetch(`/api/stats/summary${queryParams}`);
-                const data = await response.json();
+                
+                if (!response.ok){
+                    throw new Error(`HTTP error- status: ${response.status}`);
+                }
 
+                const data = await response.json();
+                console.log('Received data: ', data);
+                
+                // Update the stat cards with real data
+                document.getElementById('avg-tariff').textContent = data.avg_tariff_rate + '%';
+                document.getElementById('total-countries').textContent = data.countries_tracked;
+                document.getElementById('total-volume').textContent = '$' + data.total_trade_volume + 'B';
+                document.getElementById('highest-tariff').textContent = data.highest_tariff_rate + '%';
+                
+                updateLastUpdated();
             } catch (error){
-                console.error('Error: ', error)
+                console.error('Error: ', error);
+                // Show sample data if API fails
+                updateLastUpdated();
+            } finally {
+                document.getElementById('loading').style.display = 'none';
             }
         }
 
+        // Global function to update timestamp
         function updateLastUpdated() {
             const now = new Date();
             document.getElementById('last-updated').textContent = 
                 `Last updated: ${now.toLocaleString()}`;
         }
 
-        // Event listeners
-        document.getElementById('search').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCountries = sampleCountries.filter(country => 
-                country.name.toLowerCase().includes(searchTerm)
-            );
-            renderCountries(filteredCountries);
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners
+            document.getElementById('search').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredCountries = sampleCountries.filter(country => 
+                    country.name.toLowerCase().includes(searchTerm)
+                );
+                renderCountries(filteredCountries);
+            });
+
+            document.getElementById('base-country').addEventListener('change', refreshData);
+            document.getElementById('year').addEventListener('change', refreshData);
+            document.getElementById('category').addEventListener('change', refreshData);
+
+            // Initial load
+            renderCountries(sampleCountries);
+            refreshData();
         });
-
-        document.getElementById('base-country').addEventListener('change', refreshData);
-        document.getElementById('year').addEventListener('change', refreshData);
-        document.getElementById('category').addEventListener('change', refreshData);
-
-        // Initial load
-        refreshData();
     </script>
 </body>
 </html>

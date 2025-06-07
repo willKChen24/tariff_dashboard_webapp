@@ -3,10 +3,25 @@ from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
 import wits_api
 
+#goal: find what people already want and offer it in a faster, easier way
+
 #api instance
 app = FastAPI()
 
-#list of countries tariffed
+#country codes mapping (for base country dropdown menu)
+country_codes = {
+    "US" : "USA",
+    "CN" : "CHN",
+    "EU" : "DEU",
+    "JP" : "JPN"
+}
+
+#category map (for tariff categories)
+tariff_categories = {
+    "all" : "ALL"
+}
+
+#list of countries tariffed- use for search bar function later?
 countries = [
     "China",
     "Japan",
@@ -36,8 +51,11 @@ async def shrut():
 
 #gets the data for the main 4 tiles (atr, countries tracked, total trade vol (tbd), highest tariff rate)
 @app.get("/api/stats/summary")
-async def get_dashboard_summary(base_country, partner_country, year, category):
-    grid_data = await wits_api.get_grid_data(base_country, year, partner_country, category) #need await for API call in an async function
+async def get_dashboard_summary(base_country, year, category):
+    partner_country = "WLD" #world aggregate data
+    country_code = country_codes.get(base_country)
+    product_code = tariff_categories.get(category)
+    grid_data = await wits_api.get_grid_data(country_code, year, partner_country, product_code) #need await for API call in an async function
     
     atr = grid_data[0]
     countries_tracked = grid_data[1]
@@ -45,6 +63,7 @@ async def get_dashboard_summary(base_country, partner_country, year, category):
     htr = grid_data[3]
 
     #should return a JSON response
+    #how do we know this populates the frontend with the right data?
     return JSONResponse({"avg_tariff_rate" : atr, "countries_tracked" : countries_tracked, "total_trade_volume" : tot_trade_vol, "highest_tariff_rate" : htr})
 
 #country-specific tariff data for the area below the 4 main tiles
