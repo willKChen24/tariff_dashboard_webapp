@@ -55,6 +55,13 @@ async def get_dashboard_summary(base_country, year, category):
     partner_country = "WLD" #world aggregate data
     country_code = country_codes.get(base_country)
     product_code = tariff_categories.get(category)
+
+    #error handling
+    if not country_code:
+        print("\nError: country code is invalid")
+    if not product_code:
+        print("\nError: produc code is invalid")
+
     grid_data = await wits_api.get_grid_data(country_code, year, partner_country, product_code) #need await for API call in an async function
     
     atr = grid_data[0]
@@ -64,7 +71,7 @@ async def get_dashboard_summary(base_country, year, category):
 
     #should return a JSON response
     #how do we know this populates the frontend with the right data?
-    return JSONResponse({"avg_tariff_rate" : atr, "countries_tracked" : countries_tracked, "total_trade_volume" : tot_trade_vol, "highest_tariff_rate" : htr})
+    return JSONResponse({"avg_tariff_rate" : atr, "countries_tracked" : countries_tracked, "total_trade_volume" : round(tot_trade_vol, 2), "highest_tariff_rate" : htr})
 
 #country-specific tariff data for the area below the 4 main tiles
 # @app.get("/api/countries/tariffs")

@@ -265,9 +265,9 @@
             <div class="control-group">
                 <label for="year">Year</label>
                 <select id="year">
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
                     <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
                 </select>
             </div>
             
@@ -300,7 +300,7 @@
                 <div class="stat-label">Countries Tracked</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="total-volume">$2.1T</div>
+                <div class="stat-value" id="total-volume">$2.1B</div>
                 <div class="stat-label">Total Trade Volume</div>
             </div>
             <div class="stat-card">
@@ -405,10 +405,10 @@
             const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}`;
         
             try {
-                const response = await fetch(`/api/stats/summary${queryParams}`);
+                const response = await fetch(`http://127.0.0.1:8000/api/stats/summary${queryParams}`);
                 
                 if (!response.ok){
-                    throw new Error(`HTTP error- status: ${response.status}`);
+                    throw new Error(`HTTP error- status: ${response.status}`); //why 422 internal server error?
                 }
 
                 const data = await response.json();

@@ -4,7 +4,10 @@ import requests
 #for export trade values
 # xprt_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter/USA/year/2022/partner/WLD/product/ALL/indicator/XPRT-TRD-VL?format=JSON"
 # xprt_resp = requests.get(xprt_url)
-# xprt_json = xprt_resp.json()
+# # xprt_json = xprt_resp.json()
+
+# print("🔍 Export URL:", xprt_url)
+# print("📄 Raw export response:", xprt_resp.text[:500])
 # print(f"\nShowing export data: \n {xprt_json}")
 
 # xprt_series = xprt_json['dataSets'][0]['series']
