@@ -18,8 +18,38 @@ country_codes = {
 
 #category map (for tariff categories)
 tariff_categories = {
-    "all" : "ALL"
+    "all" : "ALL",
+    # "Animal": "01-05_Animal",
+    # "Vegetable": "06-15_Vegetable",
+    # "Food Products": "16-24_FoodProd",
+    # "Minerals": "25-26_Minerals",
+    # "Fuels": "27-27_Fuels",
+    # "Chemicals": "28-38_Chemicals",
+    # "Plastic or Rubber": "39-40_PlastiRub",
+    # "Hides and Skins": "41-43_HidesSkin",
+    # "Wood": "44-49_Wood",
+    "textiles": "50-63_TextCloth",
+    # "Footwear": "64-67_Footwear",
+    # "Stone and Glass": "68-71_StoneGlas",
+    # "Metals": "72-83_Metals",
+    "electronics": "84-85_MachElec",
+    # "Transportation": "86-89_Transport",
+    "automotive": "90-99_Miscellan",
+    "agricultural": "AgrRaw",
+    # "Chemical": "Chemical",
+    # "Food": "Food",
+    # "Fuel": "Fuels",
+    # "Manufactures": "manuf",
+    # "Ores and Metals": "OresMtls",
+    # "Textiles": "Textiles",
+    # "All Products": "Total",
+    # "Machinery and Transport Equipment": "Transp",
+    # "Raw materials": "UNCTAD-SoP1",
+    # "Intermediate goods": "UNCTAD-SoP2",
+    # "Consumer goods": "UNCTAD-SoP3",
+    # "Capital goods": "UNCTAD-SoP4"
 }
+
 
 #list of countries tariffed- use for search bar function later?
 countries = [

@@ -1,13 +1,29 @@
 import requests
+import xml.etree.ElementTree as ET
+#for testing 
+#IMPORTANT: data past 2022 does not yet exist :/
 
-#for testing
+#for products (NOT A JSON RESPONSE!)
+# product_url = "https://wits.worldbank.org/API/V1/wits/datasource/trn/product/all?format=JSON"
+# product_response = requests.get(product_url)
+
+# #parse data as XML since we don't have a json response body
+# root = ET.fromstring(product_response.content)
+
+# products = []
+# for product in root.findall(".//{http://wits.worldbank.org}product"):
+#     code = product.attrib.get("productcode") #attrib is a dict of attributes
+#     desc = product.find("{http://wits.worldbank.org}productdescription").text #finds the first child with the productdescription tag
+#     products.append(desc)
+
+# print(products)
+# product_json = product_response.json()
+# print(f"\nShowing all avaiable product categories: \n {product_json}")
 #for export trade values
 # xprt_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter/USA/year/2022/partner/WLD/product/ALL/indicator/XPRT-TRD-VL?format=JSON"
 # xprt_resp = requests.get(xprt_url)
 # # xprt_json = xprt_resp.json()
 
-# print("🔍 Export URL:", xprt_url)
-# print("📄 Raw export response:", xprt_resp.text[:500])
 # print(f"\nShowing export data: \n {xprt_json}")
 
 # xprt_series = xprt_json['dataSets'][0]['series']
@@ -47,8 +63,21 @@ import requests
 # tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/USA/year/2022/partner/WLD/product/ALL/indicator/AHS-SMPL-AVRG?format=JSON"
 # tariffs_resp = requests.get(tariffs_url)
 # tariffs_json = tariffs_resp.json()
-# print(tariffs_json)
 
+# category_series = tariffs_json['structure']['dimensions']['series']
+# categories = []
+# for dim in category_series:
+#     if dim['id'] == 'PRODUCTCODE':
+#         for val in dim['values']:
+#             categories.append({'id' : val['id'], 'name' : val['name']})
+
+# for category in categories:
+#     print(f"{category['id']}: {category['name']}")
+
+# textiles_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/USA/year/2022/partner/WLD/product/Textiles/indicator/AHS-SMPL-AVRG?format=JSON"
+# textiles_resp = requests.get(textiles_url)
+# textiles_json = textiles_resp.json()
+# print(textiles_json)
 # tariff_series = tariffs_json['dataSets'][0]['series']
 
 # tariff_rates = []
