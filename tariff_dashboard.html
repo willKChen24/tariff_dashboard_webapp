@@ -246,7 +246,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Global Tariff Dashboard</h1>
+        <h1>TariffDash- Global Tariff Dashboard</h1>
         <p>Visualization of international trade tariffs and trade volumes</p>
     </div>
 
@@ -286,7 +286,6 @@
                 <label for="search">Search Country</label>
                 <input type="text" id="search" placeholder="Enter country name...">
             </div>
-            
             <button class="refresh-btn" onclick="refreshData()">Refresh Data</button>
         </div>
 
@@ -315,6 +314,13 @@
 
         <div class="loading" id="loading" style="display: none;">Loading tariff data...</div>
         <div class="last-updated" id="last-updated">Last updated: Never</div>
+
+        <!--adding a footer for contact info/socials-->
+        <footer style="text-align: center; color: white; font-size: 0.9rem; margin-top: 2rem;">
+            A project by <a href="https://www.linkedin.com/in/will-k-chen/" target="_blank" style="color: #cbd5e0;">Will Chen</a> &amp;
+            <a href="https://www.linkedin.com/in/daiki-narimoto/" target="_blank" style="color: #cbd5e0;">Daiki Narimoto</a>
+
+        </footer>
     </div>
 
     <script>
@@ -448,9 +454,10 @@
                 renderCountries(filteredCountries);
             });
 
-            document.getElementById('base-country').addEventListener('change', refreshData);
-            document.getElementById('year').addEventListener('change', refreshData);
-            document.getElementById('category').addEventListener('change', refreshData);
+            //these automatically refresh data after changing any one of these parameters
+            // document.getElementById('base-country').addEventListener('change', refreshData);
+            // document.getElementById('year').addEventListener('change', refreshData);
+            // document.getElementById('category').addEventListener('change', refreshData);
 
             // Initial load
             renderCountries(sampleCountries);

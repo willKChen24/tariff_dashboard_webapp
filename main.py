@@ -132,16 +132,17 @@ async def get_available_years():
 @app.get("/api/countries/search")
 async def search_countries(query, base_country, year, category, limit):
     pass
+
 #####data management#####
 
-#refreshes dashboard with latest tariff data
+#refreshes dashboard with latest tariff data (automatically?)
 @app.post("/api/data/refresh")
 async def refresh_data():
     pass
-#shows last updated status
-@app.get("/api/data/status")
-async def get_data_status():
-    pass
+#shows last updated status (don't need this for now?)
+# @app.get("/api/data/status")
+# async def get_data_status():
+#     pass
 #main fxn
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
