@@ -92,7 +92,7 @@ import xml.etree.ElementTree as ET
 # print(f"Countries tracked: {rate_ct}\n")
 
 #returns average tariff rate, highest tariff rate, total trade volume (returns multiple vals)
-async def get_grid_data(country, year, partner, product):
+def get_grid_data(country, year, partner, product):
 
     #for export trade values
     xprt_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter/{country}/year/{year}/partner/{partner}/product/{product}/indicator/XPRT-TRD-VL?format=JSON"
@@ -154,4 +154,41 @@ async def get_grid_data(country, year, partner, product):
 
     return atr, rate_ct, tot_trade_vol, htr
 
-#how to connect wits_api and main.py?
+def get_tariff_data(base_country, year, category, search_country):
+
+    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
+    tariffs_resp = requests.get(tariffs_url)
+    tariffs_json = tariffs_resp.json()
+
+    tariff_series = tariffs_json['dataSets'][0]['series']
+    tariff_rates = []
+
+    for dim in tariffs_json['structure']['dimensions']['series']:
+        if dim['id'] == 'PRODUCTCODE': #isolate the product code
+            product_categories = dim['values'] #this is a list of dicts with id and name
+            #product_categories looks something like this:
+          #{
+              #"id": "84-85_MachElec",
+              #"name": "Mach and Elec"
+           #}
+            break
+
+    for key, entry in tariff_series.items():
+        #IMPORTANT- key = FREQ : REPORTER : PARTNER : PRODUCTCODE : INDICATOR
+        rate = entry["observations"]["0"][0]
+        parts = key.split(':')
+        category_idx = int(parts[3]) #gets PRODUCTCODE
+        tariff_rates.append((rate, category_idx))
+
+    #obtain the top 3 highest tariff rates
+    tariff_rates_sorted = sorted(tariff_rates, reverse=True) #sort in descending order
+    top_3_tr = tariff_rates[:3] #get the first 3 tariff rates
+
+    #obtain the respective categories for the top 3 highest tariff rates
+    top_3_tr_categories = []
+    for rate, idx in top_3_tr:
+        category_code = product_categories[idx]["id"]
+        top_3_tr_categories.append({"tariff_rate" : round(rate, 2), "category" : category_code})
+
+    return top_3_tr_categories #return a list with dict items
+

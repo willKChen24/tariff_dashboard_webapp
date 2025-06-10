@@ -11,9 +11,10 @@ app = FastAPI()
 #country codes mapping (for base country dropdown menu)
 country_codes = {
     "US" : "USA",
-    "CN" : "CHN",
-    "EU" : "DEU",
-    "JP" : "JPN"
+    "China" : "CHN",
+    "Germany" : "DEU",
+    "Japan" : "JPN",
+    "Canada" : "CAN"
 }
 
 #category map (for tariff categories)
@@ -104,14 +105,16 @@ async def get_dashboard_summary(base_country, year, category):
     return JSONResponse({"avg_tariff_rate" : atr, "countries_tracked" : countries_tracked, "total_trade_volume" : round(tot_trade_vol, 2), "highest_tariff_rate" : htr})
 
 #country-specific tariff data for the area below the 4 main tiles
-# @app.get("/api/countries/tariffs")
-# async def get_countries_tariffs(base_country, year, category, search_term):
-#     if search_term and search_term in countries: #if the searched country provided and exists within the db
-#         #get the data between base country and that country
-#         tariff_data = get_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
-#     else: #if no search term provided, display all countries with tariffs connected to base_country
+@app.get("/api/countries/tariffs")
+async def get_countries_tariffs(base_country, year, category, search_term):
 
-#     return JSONResponse()
+    #IMPORTANT: atr and trade volume obtained through get_grid_data, htr1-3 and their categories obtained through get_tariff_data
+    if search_term and search_term in countries: #if the searched country provided and exists within the db
+        #get the data between base country and that ONE country
+        tariff_data = wits_api.get_tariff_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
+    else: #if no search term provided, display ALL countries with tariffs connected to base_country
+        pass
+    # return JSONResponse()
 
 #####filter options#####
 
