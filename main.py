@@ -108,10 +108,14 @@ async def get_dashboard_summary(base_country, year, category):
 @app.get("/api/countries/tariffs")
 async def get_countries_tariffs(base_country, year, category, search_term):
 
-    #IMPORTANT: atr and trade volume obtained through get_grid_data, htr1-3 and their categories obtained through get_tariff_data
+    #IMPORTANT: atr and htr1-3 and their categories obtained through get_tariff_data
     if search_term and search_term in countries: #if the searched country provided and exists within the db
         #get the data between base country and that ONE country
-        tariff_data = wits_api.get_tariff_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
+        tariff_data = await wits_api.get_tariff_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
+        atr = tariff_data[0]
+        top_3_tr = tariff_data[1]
+
+        return JSONResponse({"avg_tariff_rate" : atr, "top_3_tariff_rates_&_categories" : top_3_tr})
     else: #if no search term provided, display ALL countries with tariffs connected to base_country
         pass
     # return JSONResponse()
@@ -138,7 +142,7 @@ async def search_countries(query, base_country, year, category, limit):
 
 #####data management#####
 
-#refreshes dashboard with latest tariff data (automatically?)
+#refreshes dashboard with latest tariff data (automatically pulls latest data?)
 @app.post("/api/data/refresh")
 async def refresh_data():
     pass

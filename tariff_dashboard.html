@@ -368,7 +368,7 @@
             }
         ];
 
-        // Global function to render countries
+        // Global function to render countries (make async and add fetch function to an API endpoint)
         function renderCountries(countries) {
             const container = document.getElementById('countries-container');
             container.innerHTML = '';
@@ -414,7 +414,7 @@
                 const response = await fetch(`http://127.0.0.1:8000/api/stats/summary${queryParams}`);
                 
                 if (!response.ok){
-                    throw new Error(`HTTP error- status: ${response.status}`); //why 422 internal server error?
+                    throw new Error(`HTTP error- status: ${response.status}`); 
                 }
 
                 const data = await response.json();

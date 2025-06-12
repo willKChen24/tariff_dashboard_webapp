@@ -182,7 +182,8 @@ def get_tariff_data(base_country, year, category, search_country):
 
     #obtain the top 3 highest tariff rates
     tariff_rates_sorted = sorted(tariff_rates, reverse=True) #sort in descending order
-    top_3_tr = tariff_rates[:3] #get the first 3 tariff rates
+    top_3_tr = tariff_rates_sorted[:3] #get the first 3 tariff rates
+    atr = round((sum(tariff_rates)/len(tariff_rates)), 2)
 
     #obtain the respective categories for the top 3 highest tariff rates
     top_3_tr_categories = []
@@ -190,5 +191,5 @@ def get_tariff_data(base_country, year, category, search_country):
         category_code = product_categories[idx]["id"]
         top_3_tr_categories.append({"tariff_rate" : round(rate, 2), "category" : category_code})
 
-    return top_3_tr_categories #return a list with dict items
+    return atr, top_3_tr_categories #return atr and list with dict items
 
