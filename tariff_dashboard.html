@@ -387,9 +387,9 @@
                 countryCard.innerHTML = `
                     <div class="country-header">
                         <span class="country-name">${country.name}</span>
-                        <span class="tariff-rate">${country.tariffRate}</span>
+                        <span class="tariff-rate" id="tariff-rate-${country.name.toLowerCase()}">${country.tariffRate}</span>
                     </div>
-                    <div class="trade-volume">Annual trade volume: ${country.tradeVolume}</div>
+                    <div class="trade-volume" id="trade-vol-${country.name.toLowerCase()}">Annual trade volume: ${country.tradeVolume}</div>
                     <div class="categories">
                         <strong style="margin-bottom: 0.5rem; display: block;">Top Tariffed Categories:</strong>
                         ${categoriesHtml}
@@ -400,7 +400,7 @@
             });
         }
         
-        // Global refreshData function - now accessible from onclick
+        //global refreshData function - now accessible from onclick
         async function refreshData() {
             document.getElementById('loading').style.display = 'block';
 
@@ -433,6 +433,40 @@
                 updateLastUpdated();
             } finally {
                 document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function countryTariffData(){
+            document.getElementById('loading').style.display = 'block';
+            
+            const baseCountry = document.getElementById('base-country').value;
+            const year = document.getElementById('year').value;
+            const searchCountry = document.getElementById('search').value.toLowerCase(); //need to normalize casing here
+            const category = 'all'; //IMPORTANT: might need to change this later?
+
+            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}`;
+
+            try{
+                const response = await fetch(`http://127.0.0.1:8000/api/countries/tariffs${queryParams}`);
+
+                if(!response.ok){
+                    throw new Error(`HTTP error- status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data: ', data);
+
+                //IMPORTANT: data.avg_tariff_rate is the name of one of the return vals from the backend fxn
+                document.getElementById(`tariff-rate-${searchCountry}`).textContent = data.avg_tariff_rate + "%"; 
+
+                //IMPORTANT: data.top_3_tariff_rates_&_categories is a list of dics so we need to format it before returning it
+                const top_3_categories = datatop_3_tariff_rates_&_categories.map(item => `${item.category} : ${item.tariff_rate}%`).join(', ');
+                document.getElementById(`trade-vol-${searchCountry}`).textContent = `Top categories: ${top_3_categories}`;
+
+            } catch (error){
+                console.error('Error: ', error);
+                // Show sample data if API fails
+                updateLastUpdated();
             }
         }
 
