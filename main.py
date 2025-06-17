@@ -91,9 +91,9 @@ async def get_dashboard_summary(base_country, year, category):
     if not country_code:
         print("\nError: country code is invalid")
     if not product_code:
-        print("\nError: produc code is invalid")
+        print("\nError: product code is invalid")
 
-    grid_data = await wits_api.get_grid_data(country_code, year, partner_country, product_code) #need await for API call in an async function
+    grid_data = wits_api.get_grid_data(country_code, year, partner_country, product_code) #need await for API call in an async function
     
     atr = grid_data[0]
     countries_tracked = grid_data[1]
@@ -111,15 +111,17 @@ async def get_countries_tariffs(base_country, year, category, search_term):
     #IMPORTANT: atr and htr1-3 and their categories obtained through get_tariff_data
     if search_term and search_term in countries: #if the searched country provided and exists within the db
         #get the data between base country and that ONE country
-        tariff_data = await wits_api.get_tariff_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
+        tariff_data = wits_api.get_tariff_data(base_country, year, category, search_term) #write get_data later: connect to WITS API to get the right data
         atr = tariff_data[0]
         top_3_tr = tariff_data[1]
 
         return JSONResponse({"avg_tariff_rate" : atr, "top_3_tariff_rates_&_categories" : top_3_tr})
     else: #if no search term provided, display ALL countries with tariffs connected to base_country
-        pass
-    # return JSONResponse()
-
+        #NEED TO FINISH THIS BEFORE IMPLEMENTATION
+        tariff_data = wits_api.get_tariff_data(base_country, year, category, search_term="all")
+        atr = tariff_data[0]
+        top_3_tr = tariff_data[1]
+        return JSONResponse({"avg_tariff_rate" : atr, "top_3_tariff_rates_&_categories" : top_3_tr})
 #####filter options#####
 
 #lists all countries with tariff data
