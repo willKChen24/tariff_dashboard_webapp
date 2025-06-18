@@ -12,7 +12,7 @@ app = FastAPI()
 country_codes = {
     "US" : "USA",
     "China" : "CHN",
-    "Germany" : "DEU",
+    "European Union" : "DEU",
     "Japan" : "JPN",
     "Canada" : "CAN"
 }
@@ -102,6 +102,9 @@ async def get_dashboard_summary(base_country, year, category):
 
     #should return a JSON response
     #how do we know this populates the frontend with the right data?
+    print(f"base_country={base_country}, year={year}, category={category}")
+    print(f"country_code={country_code}, product_code={product_code}")
+
     return JSONResponse({"avg_tariff_rate" : atr, "countries_tracked" : countries_tracked, "total_trade_volume" : round(tot_trade_vol, 2), "highest_tariff_rate" : htr})
 
 #country-specific tariff data for the area below the 4 main tiles

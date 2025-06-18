@@ -256,9 +256,9 @@
                 <label for="base-country">Base Country</label>
                 <select id="base-country">
                     <option value="US">United States</option>
-                    <option value="CN">China</option>
-                    <option value="EU">European Union</option>
-                    <option value="JP">Japan</option>
+                    <option value="China">China</option>
+                    <option value="European Union">European Union</option>
+                    <option value="Japan">Japan</option>
                 </select>
             </div>
             
@@ -444,7 +444,7 @@
             const searchCountry = document.getElementById('search').value.toLowerCase(); //need to normalize casing here
             const category = 'all'; //IMPORTANT: might need to change this later?
 
-            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}`;
+            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}&search_term=${searchCountry}`;
 
             try{
                 const response = await fetch(`http://127.0.0.1:8000/api/countries/tariffs${queryParams}`);
