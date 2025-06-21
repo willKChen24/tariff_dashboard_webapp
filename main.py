@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
 import wits_api
+import chardet
+import cryptography
 
 #goal: find what people already want and offer it in a faster, easier way
 

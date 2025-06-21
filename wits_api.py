@@ -97,6 +97,7 @@ def get_grid_data(country, year, partner, product):
     #for export trade values
     xprt_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter/{country}/year/{year}/partner/{partner}/product/{product}/indicator/XPRT-TRD-VL?format=JSON"
     xprt_resp = requests.get(xprt_url)
+    print("EXPORT JSON:", xprt_resp.status_code, xprt_resp.text)  # DEBUG HERE
     xprt_json = xprt_resp.json()
 
     xprt_series = xprt_json['dataSets'][0]['series']
