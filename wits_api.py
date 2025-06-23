@@ -91,6 +91,13 @@ import xml.etree.ElementTree as ET
 # print(f"Highest Tariff Rate: {round(max(tariff_rates), 2)}%\n")
 # print(f"Countries tracked: {rate_ct}\n")
 
+#more testing
+tariffs_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestatstariff/reporter/usa/year/2000/partner/jpn/product/fuels/indicator/AHS-SMPL-AVRG?format=JSON"
+tariffs_req = requests.get(tariffs_url)
+print(f"Status: {tariffs_req.status_code}") #403, need API key?
+tariffs_resp = tariffs_req.json()
+print(f"\nShowing tariff data b/t US and Japan: \n{tariffs_resp}")
+
 #returns average tariff rate, highest tariff rate, total trade volume (returns multiple vals)
 def get_grid_data(country, year, partner, product):
 
@@ -157,8 +164,10 @@ def get_grid_data(country, year, partner, product):
 
 def get_tariff_data(base_country, year, category, search_country):
 
-    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
+    #something wrong with this URL?
+    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestatstariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
     tariffs_resp = requests.get(tariffs_url)
+    print(f"Status: {tariffs_resp.status_code}")
     tariffs_json = tariffs_resp.json()
 
     tariff_series = tariffs_json['dataSets'][0]['series']

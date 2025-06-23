@@ -443,6 +443,11 @@
             const baseCountry = document.getElementById('base-country').value;
             const year = document.getElementById('year').value;
             const searchCountry = document.getElementById('search').value.toLowerCase(); //need to normalize casing here
+            
+            if (searchCountry == ""){ //search term validation moved from main to here
+                alert("No country specified; defaulting to all");
+                searchCountry = 'wld';
+            }
             const category = 'all'; //IMPORTANT: might need to change this later?
 
             const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}&search_term=${searchCountry}`;
