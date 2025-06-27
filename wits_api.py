@@ -92,11 +92,44 @@ import xml.etree.ElementTree as ET
 # print(f"Countries tracked: {rate_ct}\n")
 
 #more testing
-tariffs_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestatstariff/reporter/usa/year/2000/partner/jpn/product/fuels/indicator/AHS-SMPL-AVRG?format=JSON"
+tariffs_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/usa/year/2022/partner/jpn/product/fuels/indicator/AHS-SMPL-AVRG?format=JSON"
 tariffs_req = requests.get(tariffs_url)
-print(f"Status: {tariffs_req.status_code}") #403, need API key?
+print(f"Status: {tariffs_req.status_code}") #URL works now but only gives one tariffed good, not 3- need different link?
 tariffs_resp = tariffs_req.json()
 print(f"\nShowing tariff data b/t US and Japan: \n{tariffs_resp}")
+
+tariff_series = tariffs_resp['dataSets'][0]['series']
+tariff_rates = []
+
+for dim in tariffs_resp['structure']['dimensions']['series']:
+    if dim['id'] == 'PRODUCTCODE': #isolate the product code
+        product_categories = dim['values'] #this is a list of dicts with id and name
+            #product_categories looks something like this:
+          #{
+              #"id": "84-85_MachElec",
+              #"name": "Mach and Elec"
+           #}
+        break
+
+for key, entry in tariff_series.items():
+    #IMPORTANT- key = FREQ : REPORTER : PARTNER : PRODUCTCODE : INDICATOR
+    rate = entry["observations"]["0"][0]
+    parts = key.split(':')
+    category_idx = int(parts[3]) #gets PRODUCTCODE
+    tariff_rates.append((rate, category_idx))
+
+#obtain the top 3 highest tariff rates
+tariff_rates_sorted = sorted(tariff_rates, reverse=True) #sort in descending order
+top_3_tr = tariff_rates_sorted[:3] #get the first 3 tariff rates
+atr = round((sum(t[0] for t in tariff_rates)/len(tariff_rates)), 2) #list comprehension sums just the "keys" in the tuple
+
+#obtain the respective categories for the top 3 highest tariff rates
+top_3_tr_categories = []
+for rate, idx in top_3_tr:
+    category_code = product_categories[idx]["id"]
+    top_3_tr_categories.append({"tariff_rate" : round(rate, 2), "category" : category_code})
+
+print(f"\nPrinting top 3 tariffed categories: {top_3_tr_categories}")
 
 #returns average tariff rate, highest tariff rate, total trade volume (returns multiple vals)
 def get_grid_data(country, year, partner, product):
@@ -164,8 +197,7 @@ def get_grid_data(country, year, partner, product):
 
 def get_tariff_data(base_country, year, category, search_country):
 
-    #something wrong with this URL?
-    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestatstariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
+    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
     tariffs_resp = requests.get(tariffs_url)
     print(f"Status: {tariffs_resp.status_code}")
     tariffs_json = tariffs_resp.json()
