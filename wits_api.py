@@ -92,7 +92,7 @@ import xml.etree.ElementTree as ET
 # print(f"Countries tracked: {rate_ct}\n")
 
 #more testing
-tariffs_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/usa/year/2022/partner/jpn/product/fuels/indicator/AHS-SMPL-AVRG?format=JSON"
+tariffs_url = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/usa/year/2022/partner/jpn/product/all/indicator/AHS-SMPL-AVRG?format=JSON"
 tariffs_req = requests.get(tariffs_url)
 print(f"Status: {tariffs_req.status_code}") #URL works now but only gives one tariffed good, not 3- need different link?
 tariffs_resp = tariffs_req.json()
@@ -197,7 +197,8 @@ def get_grid_data(country, year, partner, product):
 
 def get_tariff_data(base_country, year, category, search_country):
 
-    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/{category}/indicator/AHS-SMPL-AVRG?format=JSON"
+    #replaced /category with /all for testing
+    tariffs_url = f"https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-tariff/reporter/{base_country}/year/{year}/partner/{search_country}/product/all/indicator/AHS-SMPL-AVRG?format=JSON"
     tariffs_resp = requests.get(tariffs_url)
     print(f"Status: {tariffs_resp.status_code}")
     tariffs_json = tariffs_resp.json()
