@@ -1,0 +1,89 @@
+# =================================================================================
+# General
+# =================================================================================
+
+# Files containing sensitive information and secrets
+# NEVER commit secrets, API keys, or credentials. Use environment variables.
+.env
+.env.local
+.env.*.local
+
+# But DO commit the example file
+!.env.example
+
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# Log files
+*.log
+*.log.*
+
+
+# =================================================================================
+# Python / Backend
+# =================================================================================
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments - IMPORTANT to ignore
+venv/
+.venv/
+env/
+.env/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage data
+.coverage
+.coverage.*
+
+
+# =================================================================================
+# Node.js / Frontend (React, Vite)
+# =================================================================================
+
+# Dependencies - This is the most important one for Node projects
+node_modules/
+
+# Build output folder (Vite uses 'dist')
+dist/
+
+# Vite internal cache
+.vite/
+
+# Log files
+npm-debug.log*
+yarn-error.log
+yarn-debug.log
+
+# Test reports
+coverage/
+
+
+# =================================================================================
+# Editor & IDE specific files
+# =================================================================================
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm
+.idea/

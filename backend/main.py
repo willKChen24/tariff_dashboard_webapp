@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import wits_api
+import backend.wits_api as wits_api
 import chardet
 import cryptography
 
@@ -124,7 +125,7 @@ async def get_countries_tariffs(base_country, year, category, search_term):
     atr = tariff_data[0]
     top_3_tr = tariff_data[1]
 
-    return JSONResponse({"avg_tariff_rate" : atr, "top_3_tariff_rates_&_categories" : top_3_tr})
+    return JSONResponse({"avg_tariff_rate" : atr, "top_3_tariff_rates_and_categories" : top_3_tr})
 
 #####filter options#####
 
