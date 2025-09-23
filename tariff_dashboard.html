@@ -437,44 +437,91 @@
             }
         }
 
-        async function countryTariffData(){
+        async function countryTariffData() {
             document.getElementById('loading').style.display = 'block';
-            
+
             const baseCountry = document.getElementById('base-country').value;
             const year = document.getElementById('year').value;
-            const searchCountry = document.getElementById('search').value.toLowerCase(); //need to normalize casing here
-            
-            if (searchCountry == ""){ //search term validation moved from main to here
-                alert("No country specified; defaulting to all");
-                searchCountry = 'wld';
+            let searchCountry = document.getElementById('search').value.trim();
+
+            if (searchCountry === "") {
+                alert("No country specified; defaulting to 'World'.");
+                searchCountry = "WLD";
             }
-            const category = 'all'; //IMPORTANT: might need to change this later?
+
+            const searchKey = searchCountry.toLowerCase();
+            const category = "all";
 
             const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}&search_term=${searchCountry}`;
 
-            try{
+            try {
                 const response = await fetch(`http://127.0.0.1:8000/api/countries/tariffs${queryParams}`);
 
-                if(!response.ok){
-                    throw new Error(`HTTP error- status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error - status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                console.log('Received data: ', data);
+                console.log("Received data:", JSON.stringify(data, null, 2));
 
-                //IMPORTANT: data.avg_tariff_rate is the name of one of the return vals from the backend fxn
-                document.getElementById(`tariff-rate-${searchCountry}`).textContent = data.avg_tariff_rate + "%"; 
+                const container = document.getElementById('countries-container');
+                const existingCard = document.getElementById(`tariff-rate-${searchKey}`);
 
-                //IMPORTANT: data.top_3_tariff_rates_&_categories is a list of dics so we need to format it before returning it
-                const top_3_categories = datatop_3_tariff_rates_&_categories.map(item => `${item.category} : ${item.tariff_rate}%`).join(', ');
-                document.getElementById(`trade-vol-${searchCountry}`).textContent = `Top categories: ${top_3_categories}`;
+                // Format top 3 tariffed categories
+                const top_3_categories = data["top_3_tariff_rates_&_categories"].map(item =>
+                    `<div class="category">
+                        <span class="category-name">${item.category}</span>
+                        <span class="category-rate">${item.tariff_rate}%</span>
+                    </div>`
+                ).join('');
 
-            } catch (error){
-                console.error('Error: ', error);
-                // Show sample data if API fails
-                updateLastUpdated();
-            }
-        }
+                if (!existingCard) {
+                    // Build new card
+                    const newCard = document.createElement('div');
+                    newCard.className = 'country-card';
+                    newCard.innerHTML = `
+                        <div class="country-header">
+                            <span class="country-name">${searchCountry}</span>
+                            <span class="tariff-rate" id="tariff-rate-${searchKey}">${data.avg_tariff_rate}%</span>
+                        </div>
+                        <div class="trade-volume" id="trade-vol-${searchKey}">
+                            Top categories:
+                        </div>
+                        <div class="categories">
+                            <strong style="margin-bottom: 0.5rem; display: block;">Top Tariffed Categories:</strong>
+                            ${top_3_categories}
+                        </div>
+                    `;
+                    container.appendChild(newCard);
+                } else {
+                    // Update existing card
+                    document.getElementById(`tariff-rate-${searchKey}`).textContent = `${data.avg_tariff_rate}%`;
+
+                    const summaryText = data["top_3_tariff_rates_&_categories"]
+                        .map(item => `${item.category}: ${item.tariff_rate}%`)
+                        .join(', ');
+
+                    const categoriesContainer = document.querySelector(`#tariff-rate-${searchKey}`).closest('.country-card').querySelector('.categories');
+                    categoriesContainer.innerHTML = `
+    <strong style="margin-bottom: 0.5rem; display: block;">Top Tariffed Categories:</strong>
+    ${data["top_3_tariff_rates_&_categories"].map(item => `
+        <div class="category">
+            <span class="category-name">${item.category}</span>
+            <span class="category-rate">${item.tariff_rate}%</span>
+        </div>`).join('')}
+`;
+ 
+                }
+
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to load tariff data. Please try again.");
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                    updateLastUpdated();
+                }
+        }   
+
 
         // Global function to update timestamp
         function updateLastUpdated() {

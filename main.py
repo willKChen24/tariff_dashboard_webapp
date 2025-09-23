@@ -5,8 +5,6 @@ import wits_api
 import chardet
 import cryptography
 
-#goal: find what people already want and offer it in a faster, easier way
-
 #api instance
 app = FastAPI()
 
@@ -116,7 +114,9 @@ async def get_countries_tariffs(base_country, year, category, search_term):
     country_code = country_codes.get(base_country)
     product_code = tariff_categories.get(category)
     search_country_code = country_codes.get(search_term)
-
+    if not search_country_code:
+        print(f'\nHoly fuck: {search_term} does not exist')
+        search_country_code = "WLD"
     #IMPORTANT: atr and htr1-3 and their categories obtained through get_tariff_data
     # if search_term and search_term in countries: #if the searched country provided and exists within the db
         #get the data between base country and that ONE country
