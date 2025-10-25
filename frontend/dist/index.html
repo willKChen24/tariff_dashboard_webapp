@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Tariff Dashboard</title>
+  <script type="module" crossorigin src="/assets/index-mbrxJwl6.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BJKH2zRJ.css">
+</head>
+<body>
+  <div id="root"></div>
+<!-- 
+    <script>
+        // Sample data structure (moved to global scope)
+        const sampleCountries = [
+            {
+                name: "China",
+                tariffRate: "19.3%",
+                tradeVolume: "$690,600 million",
+                categories: [
+                    { name: "Agricultural Products", rate: "15.6%" },
+                    { name: "Automotive", rate: "25%" },
+                    { name: "Electronics", rate: "11.4%" }
+                ]
+            },
+            {
+                name: "Canada",
+                tariffRate: "0.1%",
+                tradeVolume: "$718,900 million",
+                categories: [
+                    { name: "Dairy Products", rate: "3.2%" },
+                    { name: "Textiles", rate: "0.5%" },
+                    { name: "Automotive", rate: "0%" }
+                ]
+            },
+            {
+                name: "Germany",
+                tariffRate: "3.5%",
+                tradeVolume: "$203,900 million",
+                categories: [
+                    { name: "Automotive", rate: "10%" },
+                    { name: "Machinery", rate: "2.8%" },
+                    { name: "Chemicals", rate: "4.5%" }
+                ]
+            },
+            {
+                name: "Japan",
+                tariffRate: "2.5%", 
+                tradeVolume: "$216,300 million",
+                categories: [
+                    { name: "Agricultural Products", rate: "15.1%" },
+                    { name: "Automotive", rate: "0%" },
+                    { name: "Electronics", rate: "0.4%" }
+                ]
+            }
+        ];
+
+        // Global function to render countries (make async and add fetch function to an API endpoint)
+        function renderCountries(countries) {
+            const container = document.getElementById('countries-container');
+            container.innerHTML = '';
+            
+            countries.forEach(country => {
+                const countryCard = document.createElement('div');
+                countryCard.className = 'country-card';
+                
+                const categoriesHtml = country.categories.map(cat => 
+                    `<div class="category">
+                        <span class="category-name">${cat.name}</span>
+                        <span class="category-rate">${cat.rate}</span>
+                    </div>`
+                ).join('');
+                
+                countryCard.innerHTML = `
+                    <div class="country-header">
+                        <span class="country-name">${country.name}</span>
+                        <span class="tariff-rate" id="tariff-rate-${country.name.toLowerCase()}">${country.tariffRate}</span>
+                    </div>
+                    <div class="trade-volume" id="trade-vol-${country.name.toLowerCase()}">Annual trade volume: ${country.tradeVolume}</div>
+                    <div class="categories">
+                        <strong style="margin-bottom: 0.5rem; display: block;">Top Tariffed Categories:</strong>
+                        ${categoriesHtml}
+                    </div>
+                `;
+                
+                container.appendChild(countryCard);
+            });
+        }
+        
+        //global refreshData function - now accessible from onclick
+        async function refreshData() {
+            document.getElementById('loading').style.display = 'block';
+
+            const baseCountry = document.getElementById('base-country').value;
+            const year = document.getElementById('year').value;
+            const category = document.getElementById('category').value;
+            
+            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}`;
+        
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/stats/summary${queryParams}`);
+                
+                if (!response.ok){
+                    throw new Error(`HTTP error- status: ${response.status}`); 
+                }
+
+                const data = await response.json();
+                console.log('Received data: ', data);
+                
+                // Update the stat cards with real data
+                document.getElementById('avg-tariff').textContent = data.avg_tariff_rate + '%';
+                document.getElementById('total-countries').textContent = data.countries_tracked;
+                document.getElementById('total-volume').textContent = '$' + data.total_trade_volume + 'B';
+                document.getElementById('highest-tariff').textContent = data.highest_tariff_rate + '%';
+                
+                updateLastUpdated();
+            } catch (error){
+                console.error('Error: ', error);
+                // Show sample data if API fails
+                updateLastUpdated();
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function countryTariffData(){
+            document.getElementById('loading').style.display = 'block';
+            
+            const baseCountry = document.getElementById('base-country').value;
+            const year = document.getElementById('year').value;
+            const searchCountry = document.getElementById('search').value.toLowerCase(); //need to normalize casing here
+            
+            if (searchCountry == ""){ //search term validation moved from main to here
+                alert("No country specified; defaulting to all");
+                searchCountry = 'wld';
+            }
+            const category = 'all'; //IMPORTANT: might need to change this later?
+
+            const queryParams = `?base_country=${baseCountry}&year=${year}&category=${category}&search_term=${searchCountry}`;
+
+            try{
+                const response = await fetch(`http://127.0.0.1:8000/api/countries/tariffs${queryParams}`);
+
+                if(!response.ok){
+                    throw new Error(`HTTP error- status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data: ', data);
+
+                //IMPORTANT: data.avg_tariff_rate is the name of one of the return vals from the backend fxn
+                document.getElementById(`tariff-rate-${searchCountry}`).textContent = data.avg_tariff_rate + "%"; 
+
+                //IMPORTANT: data.top_3_tariff_rates_&_categories is a list of dics so we need to format it before returning it
+                const top_3_categories = datatop_3_tariff_rates_&_categories.map(item => `${item.category} : ${item.tariff_rate}%`).join(', ');
+                document.getElementById(`trade-vol-${searchCountry}`).textContent = `Top categories: ${top_3_categories}`;
+
+            } catch (error){
+                console.error('Error: ', error);
+                // Show sample data if API fails
+                updateLastUpdated();
+            }
+        }
+
+        // Global function to update timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('last-updated').textContent = 
+                `Last updated: ${now.toLocaleString()}`;
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners
+            document.getElementById('search').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredCountries = sampleCountries.filter(country => 
+                    country.name.toLowerCase().includes(searchTerm)
+                );
+                renderCountries(filteredCountries);
+            });
+
+            //these automatically refresh data after changing any one of these parameters
+            // document.getElementById('base-country').addEventListener('change', refreshData);
+            // document.getElementById('year').addEventListener('change', refreshData);
+            // document.getElementById('category').addEventListener('change', refreshData);
+
+            // Initial load
+            renderCountries(sampleCountries);
+            refreshData();
+        });
+    </script> -->
+</body>
+</html>
