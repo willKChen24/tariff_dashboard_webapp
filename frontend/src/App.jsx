@@ -165,14 +165,14 @@ function App() {
 
   return (
     <div>
-      <div class="header">
+      <div className="header">
           <h1>TariffDash- Global Tariff Dashboard</h1>
           <p>Visualization of international trade tariffs and trade volumes</p>
         </div>
       <div className="dashboard">
         <div className="controls">
             <div className="control-group">
-                <label for="base-country">Base Country</label>
+                <label htmlFor="base-country">Base Country</label>
                 <select id="base-country">
                     <option value="US">United States</option>
                     <option value="China">China</option>
@@ -182,7 +182,7 @@ function App() {
             </div>
       
             <div className="control-group">
-                <label for="year">Year</label>
+                <label htmlFor="year">Year</label>
                 <select id="year">
                     <option value="2022">2022</option>
                     <option value="2021">2021</option>
@@ -191,7 +191,7 @@ function App() {
             </div>
             
             <div className="control-group">
-                <label for="category">Category</label>
+                <label htmlFor="category">Category</label>
                 <select id="category">
                     <option value="all">All Categories</option>
                     <option value="agricultural">Agricultural Products</option>

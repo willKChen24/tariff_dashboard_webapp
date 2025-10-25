@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import backend.wits_api as wits_api
+import wits_api as wits_api
 import chardet
 import cryptography
 
@@ -10,6 +10,19 @@ import cryptography
 
 #api instance
 app = FastAPI()
+
+#setting up CORS
+origins = [
+    "http://localhost:5173"  #will need to change this list upon deployment
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 #country codes mapping (for base country dropdown menu)
 country_codes = {
@@ -79,7 +92,7 @@ countries = [
 #defining a path (displays the webpage)
 @app.get("/")
 async def shrut():
-    return FileResponse("tariff_dashboard.html")
+    return FileResponse("frontend/src/App.jsx")
 
 #####dashboard stats#####
 
